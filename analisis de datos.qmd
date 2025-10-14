@@ -1,0 +1,164 @@
+---
+title: "analisis de datos"
+author: "Hermes Galoc Valqui"
+format: html
+editor_options: 
+  chunk_output_type: console
+---
+
+## Quarto
+
+Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+
+## Running Code
+
+When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+
+```{r}
+1 + 1
+```
+
+You can add options to executable code like this 
+
+```{r}
+#| echo: false
+2 * 2
+```
+
+The `echo: false` option disables the printing of code (only output is displayed).
+
+
+
+#librerias
+```{r}
+library(googlesheets4)
+library(tidyverse)
+
+```
+
+#extraccion de datos
+
+```{r}
+url <- "https://docs.google.com/spreadsheets/d/15r7ZwcZZHbEgltlF6gSFvCTFA-CFzVBWwg3mFlRyKPs/edit?gid=172957346#gid=172957346"
+
+gs <- url %>% 
+  as_sheets_id()
+
+fb <- gs %>% 
+  range_read("fb")
+
+str(fb)
+
+```
+
+
+
+#modelo?
+> Diseño factorial en bloques completos al azar
+
+$$ tubdw = \mu + riego + genotipo + riego*genotipo + bloque + e$$
+
+En ciencias agrarias usamos el pvalue < 0.05
+y en medicina pvalue < 0.01
+
+```{r}
+md <- aov(tubdw ~ riego + geno + riego*geno + bloque, data = fb)
+anova(md)
+```
+
+
+# corregir base de datos
+fb <- gs %>% 
+```{r}
+fb <- gs %>%
+  range_read("fb") %>% 
+  mutate(
+    riego = as.factor(riego),
+    geno = as.factor(geno),
+    block = as.factor(block),
+    bloque = as.factor(bloque)
+  )
+
+
+fb <- gs %>%
+  range_read("fb") %>% 
+  mutate(across(1;4, ~as.factor(.)))
+
+
+str(fb)
+```
+
+
+```{r}
+md <- aov(lfa ~ riego + geno + riego*geno + bloque, data = fb)
+anova(md)
+
+plot(md)
+
+```
+
+#comparacion de medias
+
+```{r}
+library(emmeans)
+#comparacion de medias de geno dentro de cada nivel de riego
+emm <- emmeans(md, ~ geno | riego)
+
+emm
+
+#letras de significancia (grupos homogeneos)
+cld
+
+```
+
+#graficos
+
+```{r}
+
+```
+
+
+```{r}
+library(inti)
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
